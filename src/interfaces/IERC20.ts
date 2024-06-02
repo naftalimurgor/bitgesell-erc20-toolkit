@@ -1,8 +1,8 @@
 interface IERC20 {
-  totalSupply(): number
-  balanceOf(account: string): number
-  transfer(recepient: string, amount: number): boolean
-  allowance(owner: string, spender: string): number
-  approve(spender: string, amount: number): boolean
-  transferFrom(sender: string, recepient: string, amount: number): boolean
+  name(): Promise<string>
+  symbol(): Promise<string>
+  totalSupply(): Promise<number>
+  balanceOf(account: string): Promise<number>
+  transfer(recepient: string, amount: number): Promise<boolean>
+  transferFrom(sender: string, recepient: string, amount: number): Promise<boolean>
 }

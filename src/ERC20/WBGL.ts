@@ -1,41 +1,58 @@
-import { ethers } from 'ethers'
-import { Networks, RPCs } from '../constants/Networks';
+import { ethers } from 'ethers';
+import { USDTABI } from '../ABI/USDT';
+import { ERC20 } from '../constants';
+import { Networks } from '../constants/Networks';
 
-/**
- * Token Wrapper for Wrapped BGL (WBGL)
- * @link
- */
+export interface IUSDTOptions {
+  network: Networks,
+  privateKey?: string
+  signer?: any,
+  rpc: string
+}
+
 export class WBGL implements IERC20 {
   private _signer: any
   private _network: Networks
   private WBGLContractInstance: any
-
-  constructor(_signer, network: Networks, privateKey: string) {
+  private rpc: string
+  private contractAddress: string
+  constructor({ signer, rpc, privateKey, network }: IUSDTOptions) {
+    this.rpc = rpc
     this._network = network
-    this._signer = network === Networks.BNBChain ? new _signer(privateKey, RPCs.BNB_CHAIN) : new _signer(privateKey, RPCs.ETHEREUM)
-    // this.WBGLContractInstance = new ethers.Contract(this._signer,)
-  }
-  public totalSupply(): number {
-    throw new Error("Method not implemented.");
-  }
-
-  public balanceOf(account: string): number {
-    throw new Error("Method not implemented.");
+    let provider = new ethers.providers.JsonRpcProvider(this.rpc);
+    this._signer = signer !== 'undefined' ? signer : new ethers.Wallet(privateKey, provider)
+    this.contractAddress = this._network === Networks.BNBChain ? ERC20.WBGL.Binance : ERC20.WBGL.Ethereum
+    this.WBGLContractInstance = new ethers.Contract(this.contractAddress, USDTABI, this._signer)
   }
 
-  public transfer(recepient: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async name(): Promise<string> {
+    const contractName = await this.WBGLContractInstance.name()
+    return contractName
   }
 
-  public allowance(owner: string, spender: string): number {
-    throw new Error("Method not implemented.");
+  public async symbol(): Promise<string> {
+    const tokenSymbol = await this.WBGLContractInstance.symbol()
+    return tokenSymbol
   }
 
-  public approve(spender: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async totalSupply(): Promise<number> {
+    const balance = await this.WBGLContractInstance.totalSupply()
+    return Number(ethers.utils.formatUnits(balance, 18))
   }
 
-  public transferFrom(sender: string, recepient: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async balanceOf(account: string): Promise<number> {
+    const accountBalance = await this.WBGLContractInstance.balanceOf(account)
+    return Number(ethers.utils.formatUnits(accountBalance, 18))
+
+  }
+
+  public async transfer(recepient: string, amount: number): Promise<boolean> {
+    const success = await this.WBGLContractInstance.transfer(recepient, ethers.utils.parseUnits(String(amount), 18))
+    return success
+  }
+
+  public async transferFrom(sender: string, recepient: string, amount: number): Promise<boolean> {
+    const success = await this.WBGLContractInstance.transferFrom(sender, recepient, ethers.utils.parseUnits(String(amount), 18))
+    return success
   }
 }

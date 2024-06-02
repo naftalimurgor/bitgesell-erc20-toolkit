@@ -1,37 +1,59 @@
-import { ethers } from 'ethers'
+import { ethers, Signer } from 'ethers'
 import { Networks, RPCs } from '../constants/Networks';
+import { ERC20 } from '../constants';
+import { USDTABI } from '../ABI/USDT';
+
+export interface IUSDTOptions {
+  network: Networks,
+  privateKey?: string
+  signer?: any,
+  rpc: string
+}
 
 export class USDT implements IERC20 {
   private _signer: any
   private _network: Networks
   private USDTContractInstance: any
-
-  constructor(_signer, network: Networks, privateKey: string) {
+  private rpc: string
+  private contractAddress: string
+  constructor({ signer, rpc, privateKey, network }: IUSDTOptions) {
+    this.rpc = rpc
     this._network = network
-    this._signer = network === Networks.BNBChain ? new _signer(privateKey, RPCs.BNB_CHAIN) : new _signer(privateKey, RPCs.ETHEREUM)
-    // this.UsdtContractInstance = new ethers.Contract(this._signer,)
-  }
-  public totalSupply(): number {
-    throw new Error("Method not implemented.");
+    this.contractAddress = this._network === Networks.BNBChain ? ERC20.USDT.Binance : ERC20.USDT.Ethereum
+    let provider = new ethers.providers.JsonRpcProvider(this.rpc);
+    this._signer = signer !== 'undefined' ? signer : new ethers.Wallet(privateKey, provider)
+
+    this.USDTContractInstance = new ethers.Contract(this.contractAddress, USDTABI, this._signer)
   }
 
-  public balanceOf(account: string): number {
-    throw new Error("Method not implemented.");
+  public async name(): Promise<string> {
+    const contractName = await this.USDTContractInstance.name()
+    return contractName
   }
 
-  public transfer(recepient: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async symbol(): Promise<string> {
+    const tokenSymbol = await this.USDTContractInstance.name()
+    return tokenSymbol
   }
 
-  public allowance(owner: string, spender: string): number {
-    throw new Error("Method not implemented.");
+  public async totalSupply(): Promise<number> {
+    const balance = await this.USDTContractInstance.totalSupply()
+    return Number(ethers.utils.formatUnits(balance, 18))
   }
 
-  public approve(spender: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async balanceOf(account: string): Promise<number> {
+    const accountBalance = await this.USDTContractInstance.balanceOf(account)
+    return Number(ethers.utils.formatUnits(accountBalance, 18))
+
   }
 
-  public transferFrom(sender: string, recepient: string, amount: number): boolean {
-    throw new Error("Method not implemented.");
+  public async transfer(recepient: string, amount: number): Promise<boolean> {
+    const success = await this.USDTContractInstance.transfer(recepient, ethers.utils.parseUnits(String(amount), 18))
+    return success
+  }
+
+  public async transferFrom(sender: string, recepient: string, amount: number): Promise<boolean> {
+    const success = await this.USDTContractInstance.transferFrom(sender, recepient, ethers.utils.parseUnits(String(amount), 18))
+    return success
   }
 }
