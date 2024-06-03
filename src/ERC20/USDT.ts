@@ -32,7 +32,7 @@ export class USDT implements IERC20 {
   }
 
   public async symbol(): Promise<string> {
-    const tokenSymbol = await this.USDTContractInstance.name()
+    const tokenSymbol = await this.USDTContractInstance.symbol()
     return tokenSymbol
   }
 
