@@ -33,8 +33,9 @@ For non-readonly methods, the caller account needs to be a signer,i.e should be 
 
 ```typescript
 // Browsers environments
-const signer = new ethers.Signer(RPCs.ETHEREUM, window.provider)
-const signer = new ethers.Signer(RPCs.ETHEREUM, process.env.PRIVATE_KEY)
+const provider = new ethers.providers.JsonRpcProvider(this.rpc);
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
 
 const options = {
   network: Networks.Ethereum,
