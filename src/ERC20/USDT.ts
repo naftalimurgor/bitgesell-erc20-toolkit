@@ -1,7 +1,7 @@
-import { ethers, Signer } from 'ethers'
-import { Networks, RPCs } from '../constants/Networks';
-import { ERC20 } from '../constants';
+import { ethers, } from 'ethers';
 import { USDTABI } from '../ABI/USDT';
+import { ERC20 } from '../constants';
+import { Networks } from '../constants/Networks';
 
 export interface IUSDTOptions {
   network: Networks,
