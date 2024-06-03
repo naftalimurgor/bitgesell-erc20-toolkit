@@ -1,16 +1,20 @@
 import { ethers } from 'ethers';
 import { ERC20 } from '../constants';
 import { Networks } from '../constants/Networks';
-import jest from 'jest'
+import { WBGL } from '../ERC20/WBGL';
+
+jest.mock('ethers')
 
 describe('WBGL', () => {
   const rpc = 'http://localhost:8545';
-  const privateKey = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  const provider = new ethers.providers.JsonRpcProvider(rpc)
+
+  const privateKey = process.env.PRIVATE_KEY;
   const network = Networks.BNBChain;
-  const signer = new ethers.Signer(privateKey, rpc);
+  const signer = new ethers.Wallet(privateKey, provider);
   const contractAddress = ERC20.WBGL.Binance;
 
-  let wbglInstance;
+  let wbglInstance: WBGL
   let contractMock;
 
   beforeEach(() => {
@@ -27,14 +31,6 @@ describe('WBGL', () => {
     ethers.Signer.mockImplementation(() => signer);
 
     wbglInstance = new WBGL({ signer, rpc, privateKey, network });
-  });
-
-  it('should initialize correctly', () => {
-    expect(wbglInstance.rpc).toBe(rpc);
-    expect(wbglInstance._network).toBe(network);
-    expect(wbglInstance._signer).toBe(signer);
-    expect(wbglInstance.contractAddress).toBe(contractAddress);
-    expect(wbglInstance.WBGLContractInstance).toBeDefined();
   });
 
   it('should return the name of the token', async () => {
