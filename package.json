@@ -1,6 +1,6 @@
 {
   "name": "bitgesell-erc20-toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EVM wrapper for WBGL and USDT ER20 tokens for Bitgesell",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
