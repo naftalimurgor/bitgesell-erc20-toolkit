@@ -5,7 +5,7 @@ export const ERC20 = {
   },
 
   WBGL: {
-    Binance: '',
-    Ethereum: ''
+    BNBChain: '0x2ba64efb7a4ec8983e22a49c81fa216ac33f383a',
+    Ethereum: '0x2ba64efb7a4ec8983e22a49c81fa216ac33f383a'
   }
 }

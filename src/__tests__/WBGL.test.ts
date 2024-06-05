@@ -12,7 +12,8 @@ describe('WBGL', () => {
   const privateKey = process.env.PRIVATE_KEY;
   const network = Networks.BNBChain;
   const signer = new ethers.Wallet(privateKey, provider);
-  const contractAddress = ERC20.WBGL.Binance;
+  // @ts-ignore
+  const contractAddress = ERC20.WBGL.BNBChain;
 
   let wbglInstance: WBGL
   let contractMock;
@@ -27,7 +28,9 @@ describe('WBGL', () => {
       transferFrom: jest.fn().mockResolvedValue(true),
     };
 
+    // @ts-ignore
     ethers.Contract.mockImplementation(() => contractMock);
+    // @ts-ignore
     ethers.Signer.mockImplementation(() => signer);
 
     wbglInstance = new WBGL({ signer, rpc, privateKey, network });

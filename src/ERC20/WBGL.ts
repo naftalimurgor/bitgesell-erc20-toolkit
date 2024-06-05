@@ -21,7 +21,7 @@ export class WBGL implements IERC20 {
     this._network = network
     let provider = new ethers.providers.JsonRpcProvider(this.rpc);
     this._signer = signer !== 'undefined' ? signer : new ethers.Wallet(privateKey, provider)
-    this.contractAddress = this._network === Networks.BNBChain ? ERC20.WBGL.Binance : ERC20.WBGL.Ethereum
+    this.contractAddress = this._network === Networks.BNBChain ? ERC20.WBGL.BNBChain : ERC20.WBGL.Ethereum
     this.WBGLContractInstance = new ethers.Contract(this.contractAddress, USDTABI, this._signer)
   }
 
